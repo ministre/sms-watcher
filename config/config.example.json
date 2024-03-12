@@ -1,0 +1,22 @@
+{
+  "sim-cards": [
+    {
+      "phone": "1111",
+      "device_ip": "192.168.0.10",
+      "device_username": "admin",
+      "device_password": "admin"
+    },
+    {
+      "phone": "2222",
+      "device_ip": "192.168.0.20",
+      "device_username": "admin",
+      "device_password": "admin"
+    },
+    {
+      "phone": "3333",
+      "device_ip": "192.168.0.30",
+      "device_username": "admin",
+      "device_password": "admin"
+    }
+  ]
+}
