@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    container_name: "sms-watcher-telegram-bot"
+    build: ./sms-watcher-telegram-bot
+    image: sms-watcher-telegram-bot:1.0.0
+    env_file:
+      - .env
+    restart: unless-stopped
