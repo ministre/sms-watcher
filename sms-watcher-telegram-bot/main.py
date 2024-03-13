@@ -48,7 +48,10 @@ async def handle_phone(message: types.Message):
                 if response.status_code == 200:
                     data = json.loads(response.text)
                     messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
-                    await message.answer('\r\n\r\n'.join(messages))
+                    result_messages = ""
+                    for i, result_message in enumerate(messages):
+                        result_messages += f"SMS #{i+1}: \r\n{result_message}\r\n\r\n"
+                    await message.answer(result_messages)
                 else:
                     await message.answer(f'Error: {response.status_code}')
                 break
