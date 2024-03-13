@@ -1,6 +1,8 @@
 import asyncio
 import os
 import json
+
+import requests
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart
 
@@ -11,7 +13,7 @@ USER_WHITELIST = [int(item) for item in users if item.strip().isdigit()]
 
 bot = Bot(token=TELEGRAM_TOKEN_API)
 dp = Dispatcher()
-access_err_msg = "Я могу отвечать только пользователям из белого списка"
+whitelist_error_message = "Я могу отвечать только пользователям из белого списка"
 
 with open('config/config.json', 'r') as file:
     data = json.load(file)
@@ -30,7 +32,7 @@ async def cmd_start(message: types.Message) -> None:
         )
         await message.answer("Выберите номер", reply_markup=keyboard)
     else:
-        await message.answer(access_err_msg)
+        await message.answer(whitelist_error_message)
 
 
 @dp.message(F.text.startswith("Phone: "))
@@ -39,13 +41,21 @@ async def handle_phone(message: types.Message):
         target_phone = message.text[7:]
         for sim_card in sim_cards:
             if sim_card['phone'] == target_phone:
-                device_ip = sim_card['device_ip']
-                await message.answer(device_ip)
+                url = sim_card['url']
+                cookies = {'sysauth': sim_card['sysauth']}
+                name = sim_card['name']
+                response = requests.get(url, cookies=cookies)
+                if response.status_code == 200:
+                    data = json.loads(response.text)
+                    messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
+                    await message.answer('\r\n\r\n'.join(messages))
+                else:
+                    await message.answer(f'Error: {response.status_code}')
                 break
         else:
             await message.answer("Ошибка")
     else:
-        await message.answer(access_err_msg)
+        await message.answer(whitelist_error_message)
 
 
 async def main() -> None:
