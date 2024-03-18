@@ -37,6 +37,7 @@ async def cmd_start(message: types.Message) -> None:
 
 @dp.message(F.text.startswith("Phone: "))
 async def handle_phone(message: types.Message):
+    print("Phone\n")
     if message.from_user.id in USER_WHITELIST:
         target_phone = message.text[7:]
         for sim_card in sim_cards:
