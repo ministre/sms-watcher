@@ -42,9 +42,9 @@ async def handle_phone(message: types.Message):
         for sim_card in sim_cards:
             if sim_card['phone'] == target_phone:
                 url = sim_card['url']
-                await message.answer(url)
-                # cookies = {'sysauth': sim_card['sysauth']}
-                # name = sim_card['name']
+                cookies = {'sysauth': sim_card['sysauth']}
+                name = sim_card['name']
+                await message.answer(name)
                 # response = requests.get(url, cookies=cookies)
                 # if response.status_code == 200:
                 #     data = json.loads(response.text)
