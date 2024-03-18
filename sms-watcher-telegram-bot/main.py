@@ -37,24 +37,24 @@ async def cmd_start(message: types.Message) -> None:
 
 @dp.message(F.text.startswith("Phone: "))
 async def handle_phone(message: types.Message):
-    print("Phone\n")
     if message.from_user.id in USER_WHITELIST:
         target_phone = message.text[7:]
         for sim_card in sim_cards:
             if sim_card['phone'] == target_phone:
-                url = sim_card['url']
-                cookies = {'sysauth': sim_card['sysauth']}
-                name = sim_card['name']
-                response = requests.get(url, cookies=cookies)
-                if response.status_code == 200:
-                    data = json.loads(response.text)
-                    messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
-                    result_messages = ""
-                    for i, result_message in enumerate(messages):
-                        result_messages += f"SMS #{i+1}: \r\n{result_message}\r\n\r\n"
-                    await message.answer(result_messages)
-                else:
-                    await message.answer(f'Error: {response.status_code}')
+                await message.answer("Test")
+                # url = sim_card['url']
+                # cookies = {'sysauth': sim_card['sysauth']}
+                # name = sim_card['name']
+                # response = requests.get(url, cookies=cookies)
+                # if response.status_code == 200:
+                #     data = json.loads(response.text)
+                #     messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
+                #     result_messages = ""
+                #     for i, result_message in enumerate(messages):
+                #         result_messages += f"SMS #{i+1}: \r\n{result_message}\r\n\r\n"
+                #     await message.answer(result_messages)
+                # else:
+                #     await message.answer(f'Error: {response.status_code}')
                 break
         else:
             await message.answer("Ошибка")
