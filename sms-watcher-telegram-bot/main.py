@@ -44,17 +44,17 @@ async def handle_phone(message: types.Message):
                 url = sim_card['url']
                 cookies = {'sysauth': sim_card['sysauth']}
                 name = sim_card['name']
-                await message.answer(name)
-                # response = requests.get(url, cookies=cookies)
-                # if response.status_code == 200:
+                response = requests.get(url, cookies=cookies)
+                if response.status_code == 200:
+                    await message.answer("200")
                 #     data = json.loads(response.text)
                 #     messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
                 #     result_messages = ""
                 #     for i, result_message in enumerate(messages):
                 #         result_messages += f"SMS #{i+1}: \r\n{result_message}\r\n\r\n"
                 #     await message.answer(result_messages)
-                # else:
-                #     await message.answer(f'Error: {response.status_code}')
+                else:
+                    await message.answer(f'Error: {response.status_code}')
                 break
         else:
             await message.answer("Ошибка")
