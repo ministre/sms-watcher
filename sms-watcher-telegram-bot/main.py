@@ -46,7 +46,7 @@ async def handle_phone(message: types.Message):
                 name = sim_card['name']
                 response = requests.get(url, cookies=cookies)
                 if response.status_code == 200:
-                    await message.answer(response.text)
+                    await message.answer(response.text[0:200])
                 #     data = json.loads(response.text)
                 #     messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
                 #     result_messages = ""
