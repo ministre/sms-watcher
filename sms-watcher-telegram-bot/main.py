@@ -1,15 +1,19 @@
+from services import KroksRouter
+
 import asyncio
 import os
 import json
 
-import requests
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart
 
 TELEGRAM_TOKEN_API = os.environ.get("TELEGRAM_TOKEN_API", default="")
-users_str = os.environ.get("TELEGRAM_USER_WHITELIST")
-users = users_str.split(',')
-USER_WHITELIST = [int(item) for item in users if item.strip().isdigit()]
+users_str = os.environ.get("TELEGRAM_USER_WHITELIST", default="")
+if users_str:
+    users = users_str.split(',')
+    USER_WHITELIST = [int(item) for item in users if item.strip().isdigit()]
+else:
+    USER_WHITELIST = []
 
 bot = Bot(token=TELEGRAM_TOKEN_API)
 dp = Dispatcher()
@@ -41,25 +45,19 @@ async def handle_phone(message: types.Message):
         target_phone = message.text[7:]
         for sim_card in sim_cards:
             if sim_card['phone'] == target_phone:
-                url = sim_card['url']
-                cookies = {'sysauth': sim_card['sysauth']}
-                name = sim_card['name']
-                response = requests.get(url, cookies=cookies)
-                if response.status_code == 200:
-                    await message.answer(response.text[0:800])
-                #     data = json.loads(response.text)
-                #     messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
-                #     result_messages = ""
-                #     for i, result_message in enumerate(messages):
-                #         result_messages += f"SMS #{i+1}: \r\n{result_message}\r\n\r\n"
-                #     await message.answer(result_messages)
+                if sim_card['device'] == "kroks":
+                    kroks_router = KroksRouter(ip=sim_card['ip'], username=sim_card['username'],
+                                               password=sim_card['password'])
+                    result = kroks_router.get_sms(name=sim_card['name'])
+                    if result["status"]:
+                        sms_messages = ""
+                        for i, sms_message in enumerate(result["messages"]):
+                            sms_messages += f"SMS #{i+1}: \r\n{sms_message}\r\n\r\n"
+                            await message.answer(sms_messages)
+                    else:
+                        await message.answer(f'Error: {result["details"]}')
                 else:
-                    await message.answer(f'Error: {response.status_code}')
-                break
-        else:
-            await message.answer("Ошибка")
-    else:
-        await message.answer(whitelist_error_message)
+                    await message.answer("Unsupported device")
 
 
 async def main() -> None:
@@ -67,3 +65,12 @@ async def main() -> None:
 
 
 asyncio.run(main())
+
+
+# def main():
+#     kroks_router = KroksRouter(ip="", username="", password="")
+#     result = kroks_router.get_sms(name="")
+#     print(result)
+
+# if __name__ == "__main__":
+#     main()

@@ -1,5 +1,6 @@
 import json
 from abc import ABC, abstractmethod
+from typing import Union
 
 import requests
 
@@ -21,24 +22,33 @@ class KroksRouter(LteRouter):
         self.ip = ip
         self.username = username
         self.password = password
-        self.cookies = []
+        self.cookies = None
 
-    def auth(self) -> bool:
+    def auth(self) -> Union[dict, None]:
+        session = requests.Session()
         url = f"http://{self.ip}/cgi-bin/luci/"
-        data = {'luci_username': self.username, 'luci_password': self.password}
-        response = requests.post(url, data=data)
-        self.cookies = response.cookies
+        session.post(url, data={'luci_username': self.username, 'luci_password': self.password})
+        self.cookies = session.cookies
         if self.cookies:
-            return True
+            return self.cookies.get_dict()
         else:
-            return False
+            return None
 
-    def get_sms(self, name: str) -> list:
+    def get_sms(self, name: str) -> dict:
         url = f"http://{self.ip}/cgi-bin/luci/admin/network/modem/modem1/sms?method=list"
+        if not self.cookies:
+            self.auth()
         response = requests.get(url, cookies=self.cookies)
         if response.status_code == 200:
-            data = json.loads(response.text)
-            messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
+            try:
+                data = json.loads(response.text)
+                if data['result']:
+                    messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
+                else:
+                    messages = []
+                result = {"status": True, "details": "", "messages": messages}
+            except json.decoder.JSONDecodeError:
+                result = {"status": False, "details": "JSONDecodeError", "messages": []}
         else:
-            messages = []
-        return messages
+            result = {"status": False, "details": f"Response code {response.status_code} received", "messages": []}
+        return result

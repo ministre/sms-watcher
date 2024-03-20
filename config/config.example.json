@@ -1,22 +1,12 @@
 {
   "sim-cards": [
     {
-      "phone": "1234567890",
-      "url": "http://192.168.1.1/cgi-bin/luci/admin/network/modem/modem1/sms?method=list",
-      "sysauth": "1234567890",
-      "name": "Operator"
-    },
-    {
-      "phone": "1234567890",
-      "url": "http://192.168.1.10/cgi-bin/luci/admin/network/modem/modem1/sms?method=list",
-      "sysauth": "1234567890",
-      "name": "Operator"
-    },
-    {
-      "phone": "1234567890",
-      "url": "http://192.168.1.20/cgi-bin/luci/admin/network/modem/modem1/sms?method=list",
-      "sysauth": "1234567890",
-      "name": "Operator"
+      "phone": "+xxxxxxxxxxx",
+      "name": "Operator",
+      "device": "kroks",
+      "ip": "192.168.0.1",
+      "username": "root",
+      "password": "admin"
     }
   ]
 }
