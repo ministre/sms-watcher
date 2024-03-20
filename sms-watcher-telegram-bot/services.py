@@ -12,7 +12,7 @@ class LteRouter(ABC):
         pass
 
     @abstractmethod
-    def get_sms(self, name: str) -> list:
+    def get_sms(self) -> list:
         """Getting SMS messages"""
         pass
 
@@ -34,7 +34,7 @@ class KroksRouter(LteRouter):
         else:
             return None
 
-    def get_sms(self, name: str) -> dict:
+    def get_sms(self) -> dict:
         url = f"http://{self.ip}/cgi-bin/luci/admin/network/modem/modem1/sms?method=list"
         if not self.cookies:
             self.auth()
@@ -43,7 +43,10 @@ class KroksRouter(LteRouter):
             try:
                 data = json.loads(response.text)
                 if data['result']:
-                    messages = [message["storage"]["content"]["text"] for message in data["result"][name]]
+                    messages = []
+                    for source in data['result']:
+                        for message in data['result'][source]:
+                            messages.append(message['storage']['content']['text'])
                 else:
                     messages = []
                 result = {"status": True, "details": "", "messages": messages}

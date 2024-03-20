@@ -2,7 +2,6 @@
   "sim-cards": [
     {
       "phone": "+xxxxxxxxxxx",
-      "name": "Operator",
       "device": "kroks",
       "ip": "192.168.0.1",
       "username": "root",

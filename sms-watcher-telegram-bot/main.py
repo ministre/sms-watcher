@@ -48,7 +48,7 @@ async def handle_phone(message: types.Message):
                 if sim_card['device'] == "kroks":
                     kroks_router = KroksRouter(ip=sim_card['ip'], username=sim_card['username'],
                                                password=sim_card['password'])
-                    result = kroks_router.get_sms(name=sim_card['name'])
+                    result = kroks_router.get_sms()
                     if result["status"]:
                         sms_messages = ""
                         for i, sms_message in enumerate(result["messages"]):
@@ -69,8 +69,9 @@ asyncio.run(main())
 
 # def main():
 #     kroks_router = KroksRouter(ip="", username="", password="")
-#     result = kroks_router.get_sms(name="")
+#     result = kroks_router.get_sms()
 #     print(result)
-
+#
+#
 # if __name__ == "__main__":
 #     main()
