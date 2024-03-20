@@ -53,7 +53,7 @@ async def handle_phone(message: types.Message):
                         sms_messages = ""
                         for i, sms_message in enumerate(result["messages"]):
                             sms_messages += f"SMS #{i+1}: \r\n{sms_message}\r\n\r\n"
-                            await message.answer(sms_messages)
+                        await message.answer(sms_messages)
                     else:
                         await message.answer(f'Error: {result["details"]}')
                 else:
